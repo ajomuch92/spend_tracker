@@ -34,7 +34,7 @@ class SpendModel {
 
   Future<bool> update() async {
     _db ??= await getDatabase();
-    List<Map<String, dynamic>> result = await _db!.query('spends', where: '"id" = ?', whereArgs: [id]);
+    List<Map<String, dynamic>> result = await _db!.query('spends', where: 'id = ?', whereArgs: [id]);
     if (result.isNotEmpty) {
       SpendModel oldValue = SpendModel.fromCustomJson(result[0]);
       oldValue.description = description;
@@ -43,7 +43,7 @@ class SpendModel {
       oldValue.date = date;
       int updated = await _db!.rawUpdate(
           'UPDATE spends SET description = ?, amount = ?, date = ?, idCategory = ? WHERE id = ?',
-          [oldValue.description, oldValue.amount, oldValue.date!.millisecondsSinceEpoch, id]);
+          [oldValue.description, oldValue.amount, oldValue.date!.millisecondsSinceEpoch, oldValue.idCategory, id]);
       return updated > 0;
     }
     return false;
