@@ -183,7 +183,7 @@ class _CategoriesState extends State<Categories> {
           width: 50.0,
           color: color,
           child: Icon(
-            getIconDataFromString(item.icon!),
+            IconTransformation.getIconDataFromString(item.icon!),
             color: isDarkHsp(color)! ? Colors.white: Colors.black,
           ),
         ),

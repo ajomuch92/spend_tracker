@@ -112,7 +112,7 @@ class _NewCategoryState extends State<NewCategory> {
                   itemBuilder: (context, icon) {
                     return ListTile(
                       leading: Icon(
-                          getIconDataFromString(icon)
+                        IconTransformation.getIconDataFromString(icon)
                       ),
                       title: Text(icon.replaceAll('-', ' ')),
                     );

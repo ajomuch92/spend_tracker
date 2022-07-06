@@ -189,7 +189,7 @@ class _HomeState extends State<Home> {
           height: 50.0,
           color: _color,
           child: Icon(
-            getIconDataFromString(item.categoryModel!.icon!),
+            IconTransformation.getIconDataFromString(item.categoryModel!.icon!),
             color: isDarkHsp(_color)! ? Colors.white: Colors.black,
           ),
         ),
