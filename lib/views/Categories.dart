@@ -131,6 +131,7 @@ class _CategoriesState extends State<Categories> {
             key: const Key('0'),
             onVisibilityChanged: (visibilityInfo) {
               double visiblePercent = visibilityInfo.visibleFraction * 100;
+              print(visiblePercent);
             },
             child: Container(
               height: 1.0,
@@ -141,7 +142,7 @@ class _CategoriesState extends State<Categories> {
   }
 
   Widget _renderTile(BuildContext context, CategoryModel item) {
-    Color _color = Color(item.color!);
+    Color color = Color(item.color!);
     return Slidable(
       key: const ValueKey(0),
       endActionPane: ActionPane(
@@ -158,7 +159,16 @@ class _CategoriesState extends State<Categories> {
             label: 'Delete',
           ),
           SlidableAction(
-            onPressed: (context) {},
+            onPressed: (context) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NewCategory(categoryModel: item,)),
+              ).then((value) {
+                if (value != null) {
+                  reloadPage();
+                }
+              });
+            },
             backgroundColor: Colors.orange,
             foregroundColor: Colors.white,
             icon: Icons.edit,
@@ -171,10 +181,10 @@ class _CategoriesState extends State<Categories> {
         leading: Container(
           height: 50.0,
           width: 50.0,
-          color: _color,
+          color: color,
           child: Icon(
             getIconDataFromString(item.icon!),
-            color: isDarkHsp(_color)! ? Colors.white: Colors.black,
+            color: isDarkHsp(color)! ? Colors.white: Colors.black,
           ),
         ),
       ),

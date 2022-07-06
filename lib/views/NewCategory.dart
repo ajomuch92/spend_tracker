@@ -10,7 +10,8 @@ import 'package:spend_tracker/models/CategoryModel.dart';
 import '../Utils/Transformation.dart';
 
 class NewCategory extends StatefulWidget {
-  const NewCategory({Key? key}) : super(key: key);
+  final CategoryModel? categoryModel;
+  const NewCategory({Key? key, this.categoryModel}) : super(key: key);
 
   @override
   State<NewCategory> createState() => _NewCategoryState();
@@ -19,6 +20,7 @@ class NewCategory extends StatefulWidget {
 class _NewCategoryState extends State<NewCategory> {
   final _formKey = GlobalKey<FormBuilderState>();
   SimpleFontelicoProgressDialog? _dialog;
+  CategoryModel? categoryModelToEdit;
   final List<String> icons = icon_list;
   // IList<String> ilist = IList(const []);
 
@@ -26,6 +28,9 @@ class _NewCategoryState extends State<NewCategory> {
   initState(){
     super.initState();
     // ilist = IList(icons);
+    if (widget.categoryModel != null) {
+      categoryModelToEdit = widget.categoryModel;
+    }
   }
 
   void _save(BuildContext context) async {
@@ -38,7 +43,12 @@ class _NewCategoryState extends State<NewCategory> {
         CategoryModel category = CategoryModel.fromCustomJson(jsonSpend);
         category.color = color.value;
         _dialog!.show(message: 'Saving');
-        await category.save();
+        if (categoryModelToEdit == null) {
+          await category.save();
+        } else {
+          category.id = categoryModelToEdit?.id;
+          await category.update();
+        }
         _dialog!.hide();
         if(!mounted) return;
         showToast(context, 'Category created successfully', toastStatus: ToastStatus.success);
@@ -80,15 +90,16 @@ class _NewCategoryState extends State<NewCategory> {
                     FormBuilderValidators.required(errorText: 'Description field is required'),
                   ]),
                   keyboardType: TextInputType.name,
+                  initialValue: categoryModelToEdit?.name,
                 ),
                 FormBuilderColorPickerField(
                   name: 'colorPicker',
-                  // readOnly: true,
                   colorPickerType: ColorPickerType.materialPicker,
                   decoration: const InputDecoration(labelText: 'Color'),
                   validator: FormBuilderValidators.compose([
                     FormBuilderValidators.required(errorText: 'Color field is required'),
                   ]),
+                  initialValue: categoryModelToEdit != null ? Color(categoryModelToEdit?.color ?? 0) : null,
                 ),
                 FormBuilderTypeAhead<String>(
                   decoration: const InputDecoration(
@@ -106,6 +117,8 @@ class _NewCategoryState extends State<NewCategory> {
                       title: Text(icon.replaceAll('-', ' ')),
                     );
                   },
+                  initialValue: categoryModelToEdit?.icon,
+                  debounceDuration: const Duration(milliseconds: 800),
                   suggestionsCallback: (query) {
                     if (query.isNotEmpty) {
                       var lowercaseQuery = query.toLowerCase();
