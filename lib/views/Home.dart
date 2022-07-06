@@ -3,7 +3,6 @@ import 'package:flutter_is_dark_color_hsp/flutter_is_dark_color_hsp.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:spend_tracker/models/ResponseModel.dart';
 import 'package:visibility_detector/visibility_detector.dart';
-
 import '../Utils/Toast.dart';
 import '../Utils/Transformation.dart';
 import '../models/SpendModel.dart';
@@ -30,7 +29,7 @@ class _HomeState extends State<Home> {
     }
   }
 
-  Future<void> loadPage({int limit = 25, offset = 0}) async{
+  Future<void> loadPage({int limit = 100, offset = 0}) async{
     ResponseModel response = await SpendModel.getList(offset: offset, limit: limit);
     double total = response.items.isNotEmpty ? await SpendModel.getTotalLastMonth() : 0;
     setState(() {
@@ -124,7 +123,7 @@ class _HomeState extends State<Home> {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Text('L $totalLastMonth'),
+            Text('L ${totalLastMonth.toStringAsFixed(2)}'),
           ],
         ),
         Expanded(
@@ -164,7 +163,16 @@ class _HomeState extends State<Home> {
             label: 'Delete',
           ),
           SlidableAction(
-            onPressed: (context){},
+            onPressed: (context){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NewSpend(spendModel: item,)),
+              ).then((value) {
+                if (value != null) {
+                  reloadPage();
+                }
+              });
+            },
             backgroundColor: Colors.orange,
             foregroundColor: Colors.white,
             icon: Icons.share,

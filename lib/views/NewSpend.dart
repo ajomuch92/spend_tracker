@@ -10,7 +10,8 @@ import '../Utils/Toast.dart';
 import '../models/CategoryModel.dart';
 
 class NewSpend extends StatefulWidget {
-  const NewSpend({Key? key}) : super(key: key);
+  final SpendModel? spendModel;
+  const NewSpend({Key? key, this.spendModel}) : super(key: key);
 
   @override
   State<NewSpend> createState() => _NewSpendState();
@@ -18,6 +19,7 @@ class NewSpend extends StatefulWidget {
 
 class _NewSpendState extends State<NewSpend> {
   final _formKey = GlobalKey<FormBuilderState>();
+  SpendModel? spendModelToEdit;
   SimpleFontelicoProgressDialog? _dialog;
   List<CategoryModel> categories = [];
 
@@ -25,6 +27,9 @@ class _NewSpendState extends State<NewSpend> {
   initState() {
     super.initState();
     if (mounted) _loadCategories();
+    if (widget.spendModel != null) {
+      spendModelToEdit = widget.spendModel;
+    }
   }
 
   void _loadCategories() {
@@ -43,7 +48,12 @@ class _NewSpendState extends State<NewSpend> {
         _dialog!.show(message: 'Saving');
         Map<String, dynamic> jsonSpend = _formKey.currentState!.value;
         SpendModel spend = SpendModel.fromCustomJson(jsonSpend);
-        await spend.save();
+        if (spendModelToEdit == null) {
+          await spend.save();
+        } else {
+          spend.id = spendModelToEdit?.id;
+          await spend.update();
+        }
         _dialog!.hide();
         if(!mounted) return;
         showToast(context, 'Spend created successfully', toastStatus: ToastStatus.success);
@@ -85,6 +95,7 @@ class _NewSpendState extends State<NewSpend> {
                     FormBuilderValidators.required(errorText: 'Description field is required'),
                   ]),
                   keyboardType: TextInputType.text,
+                  initialValue: spendModelToEdit?.description,
                 ),
                 FormBuilderTextField(
                   name: 'amount',
@@ -96,12 +107,13 @@ class _NewSpendState extends State<NewSpend> {
                     FormBuilderValidators.required(errorText: 'Amount field is required'),
                   ]),
                   keyboardType: TextInputType.number,
+                  initialValue: spendModelToEdit?.amount.toString(),
                 ),
                 FormBuilderDateTimePicker(
                   name: 'date',
                   firstDate: DateTime(1970),
                   lastDate: DateTime.now(),
-                  initialValue: DateTime.now(),
+                  initialValue: spendModelToEdit != null? spendModelToEdit?.date : DateTime.now(),
                   decoration: const InputDecoration(
                     labelText: 'Date',
                   ),
@@ -126,6 +138,7 @@ class _NewSpendState extends State<NewSpend> {
                     CategoryModel? category = categories.firstWhere((element) => element.name == categoryName);
                     return category.id;
                   },
+                  initialValue: spendModelToEdit?.categoryModel?.name,
                   suggestionsCallback: (query) {
                     List<String> categoriesList = categories.map((e) => e.name!).toList();
                     if (query.isNotEmpty) {
