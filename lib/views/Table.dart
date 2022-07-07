@@ -31,6 +31,7 @@ class _TableViewState extends State<TableView> {
     return Scaffold(
       body: Container(
         padding: const EdgeInsets.symmetric(vertical: 10.0),
+        color: Colors.white,
         child: Center(
           child: DataTable(
             border: TableBorder.all(  
