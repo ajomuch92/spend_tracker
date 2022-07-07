@@ -1,3 +1,4 @@
+import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_extra_fields/form_builder_extra_fields.dart';
@@ -22,12 +23,12 @@ class _NewCategoryState extends State<NewCategory> {
   SimpleFontelicoProgressDialog? _dialog;
   CategoryModel? categoryModelToEdit;
   final List<String> icons = icon_list;
-  // IList<String> ilist = IList(const []);
+  IList<String> ilist = IList(const []);
 
   @override
   initState(){
     super.initState();
-    // ilist = IList(icons);
+    ilist = IList(icons);
     if (widget.categoryModel != null) {
       categoryModelToEdit = widget.categoryModel;
     }
@@ -122,17 +123,7 @@ class _NewCategoryState extends State<NewCategory> {
                   suggestionsCallback: (query) {
                     if (query.isNotEmpty) {
                       var lowercaseQuery = query.toLowerCase();
-                      if (lowercaseQuery.length < 5) {
-                        return icons.where((icon) {
-                          return icon.toLowerCase().startsWith(lowercaseQuery);
-                        }).toList(growable: false)
-                          ..sort((a, b) => a
-                              .toLowerCase()
-                              .indexOf(lowercaseQuery)
-                              .compareTo(
-                              b.toLowerCase().indexOf(lowercaseQuery)));
-                      }
-                      var result = icons.where((icon) {
+                      var result = ilist.where((icon) {
                         return icon.toLowerCase().contains(lowercaseQuery);
                       }).toList(growable: false)
                         ..sort((a, b) => a
@@ -142,7 +133,7 @@ class _NewCategoryState extends State<NewCategory> {
                             b.toLowerCase().indexOf(lowercaseQuery)));
                       return result;
                     } else {
-                      return icons.sublist(0, 10);
+                      return ilist;
                     }
                   },
                 ),
