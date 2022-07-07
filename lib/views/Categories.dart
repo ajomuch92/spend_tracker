@@ -145,7 +145,7 @@ class _CategoriesState extends State<Categories> {
     Color color = Color(item.color!);
     return Slidable(
       key: const ValueKey(0),
-      endActionPane: ActionPane(
+      startActionPane: ActionPane(
         motion: const ScrollMotion(),
         dismissible: DismissiblePane(onDismissed: () {}),
         children: [
