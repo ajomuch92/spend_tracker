@@ -149,7 +149,7 @@ class _HomeState extends State<Home> {
     Color _color = Color(item.categoryModel!.color!);
     return Slidable(
       key: const ValueKey(0),
-      endActionPane: ActionPane(
+      startActionPane: ActionPane(
         motion: const ScrollMotion(),
         dismissible: DismissiblePane(onDismissed: () {}),
         children: [
