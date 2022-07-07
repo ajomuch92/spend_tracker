@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:change_case/change_case.dart';
+import 'package:intl/intl.dart' show toBeginningOfSentenceCase;
 
+String toCamelCase(String text) {
+  List<String> textSplitted = text.split(' ');
+  List<String> textTranformed = [];
+  for (String element in textSplitted) {
+    if (textTranformed.isEmpty) {
+      textTranformed.add(element);
+    } else {
+      textTranformed.add(toBeginningOfSentenceCase(element)!);
+    }
+  }
+  return textTranformed.join('');
+}
 class IconTransformation {
   static IconData getIconDataFromString(String iconName) {
-    String iconNameTransformed = iconName.replaceAll('mdi', '').toCamelCase();
+    String iconNameTransformed = toCamelCase(iconName.replaceAll('mdi', '').replaceAll('_', ' ').replaceAll('-', ' '));
     Map<String, IconData> iconDataMap = {
       'abTesting': MdiIcons.abTesting,
       'abacus': MdiIcons.abacus,
