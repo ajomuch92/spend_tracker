@@ -58,22 +58,21 @@ class _IndexState extends State<Index> with AutomaticKeepAliveClientMixin{
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.blueAccent,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home, color: Colors.blueAccent,),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.list),
+            icon: Icon(Icons.list, color: Colors.blueAccent,),
             label: 'Categories',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.pie_chart),
+            icon: Icon(Icons.pie_chart, color: Colors.blueAccent,),
             label: 'Chart',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.table_chart),
+            icon: Icon(Icons.table_chart, color: Colors.blueAccent,),
             label: 'Table',
           )
         ],
