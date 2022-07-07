@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:spend_tracker/views/Categories.dart';
 import 'package:spend_tracker/views/Charts.dart';
 import 'package:spend_tracker/views/Home.dart';
+import 'package:spend_tracker/views/Table.dart';
 
 class Index extends StatefulWidget {
   const Index({Key? key}) : super(key: key);
@@ -17,6 +18,7 @@ class _IndexState extends State<Index> with AutomaticKeepAliveClientMixin{
     Home(),
     Categories(),
     Chart(),
+    TableView(),
   ];
 
   final _controller = PageController();
@@ -56,6 +58,7 @@ class _IndexState extends State<Index> with AutomaticKeepAliveClientMixin{
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.blueAccent,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -68,6 +71,10 @@ class _IndexState extends State<Index> with AutomaticKeepAliveClientMixin{
           BottomNavigationBarItem(
             icon: Icon(Icons.pie_chart),
             label: 'Chart',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.table_chart),
+            label: 'Table',
           )
         ],
         currentIndex: _selectedIndex,
