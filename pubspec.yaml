@@ -45,6 +45,7 @@ dependencies:
   flutter_is_dark_color_hsp: ^0.1.0
   fl_chart: ^0.55.0
   fast_immutable_collections: ^7.4.1
+  bubble_bottom_bar: ^2.0.0
 
 dev_dependencies:
   flutter_test:

@@ -1,3 +1,4 @@
+import 'package:bubble_bottom_bar/bubble_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:spend_tracker/views/Categories.dart';
 import 'package:spend_tracker/views/Charts.dart';
@@ -29,12 +30,12 @@ class _IndexState extends State<Index> with AutomaticKeepAliveClientMixin{
     super.dispose();
   }
 
-  void _onItemTapped(int index) {
+  void _onItemTapped(int? index) {
     setState(() {
-      _selectedIndex = index;
+      _selectedIndex = index!;
     });
     _controller.animateToPage(
-      index,
+      index!,
       duration: const Duration(milliseconds: 400),
       curve: Curves.easeOut,
     );
@@ -57,33 +58,43 @@ class _IndexState extends State<Index> with AutomaticKeepAliveClientMixin{
           });
         },
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
+      bottomNavigationBar: BubbleBottomBar(
+        opacity: 0.2,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+          BubbleBottomBarItem(
+            icon: Icon(Icons.home, color: Colors.black87,),
+            activeIcon: Icon(Icons.home),
+            title: Text('Home'),
+            backgroundColor: Colors.red
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Categories',
+          BubbleBottomBarItem(
+            icon: Icon(Icons.list, color: Colors.black87,),
+            activeIcon: Icon(Icons.list),
+            title: Text('Categories'),
+            backgroundColor: Colors.deepPurple
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.pie_chart),
-            label: 'Chart',
+          BubbleBottomBarItem(
+            icon: Icon(Icons.pie_chart, color: Colors.black87,),
+            activeIcon: Icon(Icons.pie_chart),
+            title: Text('Chart'),
+            backgroundColor: Colors.indigo
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.table_chart),
-            label: 'Table',
+          BubbleBottomBarItem(
+            icon: Icon(Icons.table_chart, color: Colors.black87,),
+            activeIcon: Icon(Icons.table_chart),
+            title: Text('Table'),
+            backgroundColor: Colors.green
           )
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+        hasInk: true,
+        inkColor: Colors.black12
       ),
     );
   }
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }
