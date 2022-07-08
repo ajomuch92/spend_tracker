@@ -133,7 +133,7 @@ class _NewCategoryState extends State<NewCategory> {
                             b.toLowerCase().indexOf(lowercaseQuery)));
                       return result;
                     } else {
-                      return ilist;
+                      return [];
                     }
                   },
                 ),
