@@ -22,10 +22,12 @@ class _TableViewState extends State<TableView> {
 
   Future<void> loadDataList() async{
     List<ChartResponseModel> list = await SpendModel.getChartDataListLastMonth();
+    list.sort((a, b) => a.amount!.compareTo(b.amount!));
     setState(() {
       chartDataList = list;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
