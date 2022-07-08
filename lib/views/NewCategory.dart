@@ -119,7 +119,7 @@ class _NewCategoryState extends State<NewCategory> {
                     );
                   },
                   initialValue: categoryModelToEdit?.icon,
-                  debounceDuration: const Duration(milliseconds: 800),
+                  debounceDuration: const Duration(milliseconds: 400),
                   suggestionsCallback: (query) {
                     if (query.isNotEmpty) {
                       var lowercaseQuery = query.toLowerCase();
