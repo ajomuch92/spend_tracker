@@ -1,6 +1,7 @@
 
 import 'package:spend_tracker/data/database.dart';
 import 'package:spend_tracker/models/CategoryModel.dart';
+import 'package:spend_tracker/models/FilterModel.dart';
 import 'package:spend_tracker/models/ResponseModel.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -55,10 +56,31 @@ class SpendModel {
     return result > 0;
   }
 
-  static Future<ResponseModel> getList({int offset = 0, int limit = 10}) async {
+  static Future<ResponseModel> getList({int offset = 0, int limit = 10, FilterModel? filter}) async {
     List<SpendModel> list = [];
     Database db = await getDatabase();
-    List<Map<String, dynamic>> result = await db.query('spends', limit: limit, offset: offset, orderBy: 'date ASC');
+    List<dynamic> whereArgs = [];
+    List<String> where = [];
+    if (filter != null) {
+      if (filter.dateRange != null) {
+        where.add('date >= ?');
+        whereArgs.add(filter.dateRange!.start.millisecondsSinceEpoch);
+        where.add('date <= ?');
+        whereArgs.add(filter.dateRange!.end.millisecondsSinceEpoch);
+      }
+      if (filter.idCategory != null) {
+        where.add('idCategory = ?');
+        whereArgs.add(filter.idCategory!);
+      }
+    }
+    List<Map<String, dynamic>> result = await db.query(
+      'spends',
+      where: where.isNotEmpty ? where.join(' AND ') : null,
+      whereArgs: whereArgs.isNotEmpty ? whereArgs : null,
+      limit: limit,
+      offset: offset,
+      orderBy: 'date ASC',
+    );
     int? total = Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM spends'));
     for (var element in result) {
       SpendModel spendModel = SpendModel.fromCustomJson(element);
@@ -77,13 +99,12 @@ class SpendModel {
     return null;
   }
 
-  static Future<double> getTotalLastMonth() async {
+  static Future<double> getTotalLastMonth({FilterModel? filter}) async {
     try {
       double total = 0.0;
       Database db = await getDatabase();
-      DateTime date = DateTime.now();
-      date = DateTime(date.year, date.month, 1);
-      List<Map<String, dynamic>> result = await db.rawQuery('SELECT SUM(amount) sum FROM spends WHERE date >= ${date.millisecondsSinceEpoch}');
+      String where = getWhereClausule(filter);
+      List<Map<String, dynamic>> result = await db.rawQuery('SELECT SUM(amount) sum FROM spends A WHERE $where');
       if (result.isNotEmpty) {
         total = double.tryParse(result[0]['sum']?.toString() ?? '0') ?? 0;
       }
@@ -93,17 +114,16 @@ class SpendModel {
     }
   }
 
-  static Future<List<ChartResponseModel>> getChartDataListLastMonth() async {
+  static Future<List<ChartResponseModel>> getChartDataListLastMonth({FilterModel? filter}) async {
     try {
       Database db = await getDatabase();
-      DateTime date = DateTime.now();
-      date = DateTime(date.year, date.month, 1);
       List<ChartResponseModel> list = [];
+      String where = getWhereClausule(filter);
       String sql = '''
         SELECT B.name, B.color, SUM(A.amount) amount FROM spends A
         INNER JOIN categories B
         ON A.idCategory = B.id
-        WHERE A.date >= ${date.millisecondsSinceEpoch}
+        WHERE $where
         GROUP BY B.name, B.color
       ''';
       List<Map<String, dynamic>> result = await db.rawQuery(sql);
@@ -117,4 +137,24 @@ class SpendModel {
       return [];
     }
   }
+}
+
+String getWhereClausule(FilterModel? filter) {
+  DateTime date = DateTime.now();
+  date = DateTime(date.year, date.month, 1);
+  String where = '';
+  if (filter != null) {
+    if (filter.dateRange != null) {
+      where += ' A.date >= ${filter.dateRange!.start.millisecondsSinceEpoch} AND A.date <= ${filter.dateRange!.end.millisecondsSinceEpoch} ';
+    }
+    if (filter.idCategory != null) {
+      where += '${where.isNotEmpty ? ' AND ' : ' '}A.idCategory = ${filter.idCategory}';
+    }
+    if (where.isEmpty) {
+      where = 'A.date >= ${date.millisecondsSinceEpoch}';
+    }
+  } else {
+    where = 'A.date >= ${date.millisecondsSinceEpoch}';
+  }
+  return where;
 }
