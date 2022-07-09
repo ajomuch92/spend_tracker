@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_is_dark_color_hsp/flutter_is_dark_color_hsp.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:spend_tracker/models/FilterModel.dart';
 import 'package:spend_tracker/models/ResponseModel.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import '../Utils/Toast.dart';
@@ -10,7 +11,8 @@ import 'package:intl/intl.dart';
 import 'NewSpend.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  final FilterModel? filter;
+  const Home({Key? key, this.filter}) : super(key: key);
 
   @override
   State<Home> createState() => _HomeState();
@@ -26,16 +28,25 @@ class _HomeState extends State<Home> {
     super.initState();
     if (mounted) {
       loadPage();
+      setListener();
     }
   }
 
   Future<void> loadPage({int limit = 100, offset = 0}) async{
-    ResponseModel response = await SpendModel.getList(offset: offset, limit: limit);
-    double total = response.items.isNotEmpty ? await SpendModel.getTotalLastMonth() : 0;
+    ResponseModel response = await SpendModel.getList(offset: offset, limit: limit, filter: widget.filter);
+    double total = response.items.isNotEmpty ? await SpendModel.getTotalLastMonth(filter: widget.filter) : 0;
     setState(() {
       list = [...list, ...response.items];
       totalLastMonth = total;
     });
+  }
+
+  void setListener() {
+    if (widget.filter != null) {
+      widget.filter!.addListener(() {
+        if (mounted) reloadPage();
+      });
+    }
   }
 
   void reloadPage() {

@@ -1,12 +1,14 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_is_dark_color_hsp/flutter_is_dark_color_hsp.dart';
+import 'package:spend_tracker/models/FilterModel.dart';
 import 'package:spend_tracker/models/SpendModel.dart';
 
 import '../models/ResponseModel.dart';
 
 class Chart extends StatefulWidget {
-  const Chart({Key? key}) : super(key: key);
+  final FilterModel? filter;
+  const Chart({Key? key, this.filter}) : super(key: key);
 
   @override
   State<Chart> createState() => _ChartState();
@@ -20,14 +22,23 @@ class _ChartState extends State<Chart> {
     super.initState();
     if (mounted) {
       loadDataList();
+      setListener();
     }
   }
 
   Future<void> loadDataList() async{
-    List<ChartResponseModel> list = await SpendModel.getChartDataListLastMonth();
+    List<ChartResponseModel> list = await SpendModel.getChartDataListLastMonth(filter: widget.filter);
     setState(() {
       chartDataList = list;
     });
+  }
+
+  void setListener() {
+    if (widget.filter != null) {
+      widget.filter!.addListener(() {
+        if (mounted) loadDataList();
+      });
+    }
   }
 
   @override

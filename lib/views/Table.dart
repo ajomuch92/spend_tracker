@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:spend_tracker/models/FilterModel.dart';
 import '../models/ResponseModel.dart';
 import '../models/SpendModel.dart';
 
 class TableView extends StatefulWidget {
-  const TableView({Key? key}) : super(key: key);
+  final FilterModel? filter;
+  const TableView({Key? key, this.filter}) : super(key: key);
 
   @override
   State<TableView> createState() => _TableViewState();
@@ -17,15 +19,24 @@ class _TableViewState extends State<TableView> {
     super.initState();
     if (mounted) {
       loadDataList();
+      setListener();
     }
   }
 
   Future<void> loadDataList() async{
-    List<ChartResponseModel> list = await SpendModel.getChartDataListLastMonth();
+    List<ChartResponseModel> list = await SpendModel.getChartDataListLastMonth(filter: widget.filter);
     list.sort((a, b) => a.amount!.compareTo(b.amount!));
     setState(() {
       chartDataList = list;
     });
+  }
+
+  void setListener() {
+    if (widget.filter != null) {
+      widget.filter!.addListener(() {
+        if (mounted) loadDataList();
+      });
+    }
   }
 
   @override
