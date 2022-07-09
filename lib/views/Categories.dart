@@ -147,7 +147,6 @@ class _CategoriesState extends State<Categories> {
       key: const ValueKey(0),
       startActionPane: ActionPane(
         motion: const ScrollMotion(),
-        dismissible: DismissiblePane(onDismissed: () {}),
         children: [
           SlidableAction(
             onPressed: (_) {

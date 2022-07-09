@@ -151,7 +151,6 @@ class _HomeState extends State<Home> {
       key: const ValueKey(0),
       startActionPane: ActionPane(
         motion: const ScrollMotion(),
-        dismissible: DismissiblePane(onDismissed: () {}),
         children: [
           SlidableAction(
             onPressed: (_) {
