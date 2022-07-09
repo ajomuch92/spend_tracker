@@ -31,9 +31,11 @@ class _CategoriesState extends State<Categories> {
   Future<void> loadPage({int limit = 25, offset = 0}) async {
     ResponseModel response = await CategoryModel.getList(
         offset: offset, limit: limit);
-    setState(() {
-      list = [...list, ...response.items];
-    });
+    if (mounted) {
+      setState(() {
+        list = [...list, ...response.items];
+      });
+    }
   }
 
   void reloadPage() {

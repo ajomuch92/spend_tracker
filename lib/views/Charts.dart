@@ -28,9 +28,11 @@ class _ChartState extends State<Chart> {
 
   Future<void> loadDataList() async{
     List<ChartResponseModel> list = await SpendModel.getChartDataListLastMonth(filter: widget.filter);
-    setState(() {
-      chartDataList = list;
-    });
+    if (mounted) {
+      setState(() {
+        chartDataList = list;
+      });
+    }
   }
 
   void setListener() {
