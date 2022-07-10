@@ -1,6 +1,6 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_is_dark_color_hsp/flutter_is_dark_color_hsp.dart';
+import 'package:pie_chart/pie_chart.dart';
 import 'package:spend_tracker/models/FilterModel.dart';
 import 'package:spend_tracker/models/SpendModel.dart';
 
@@ -57,26 +57,38 @@ class _ChartState extends State<Chart> {
   }
 
   Widget getChartDataWidget() {
-    double greatTotal = chartDataList.map((e) => e.amount??0).reduce((value, element) => value + element);
     return PieChart(
-      PieChartData(
-          sections: chartDataList.map((e) {
-            Color color = Color(e.color!);
-            String percent = (e.amount! / greatTotal * 100).toStringAsFixed(2);
-            return PieChartSectionData(
-              color: color,
-              value: e.amount!,
-              title: '${e.name!}($percent%)',
-              radius: 100.0,
-              titleStyle: TextStyle(
-                color: isDarkHsp(color)! ? Colors.white : Colors.black,
-
-              ),
-            );
-          }).toList()
+      dataMap: getDataMap(),
+      animationDuration: const Duration(milliseconds: 500),
+      chartLegendSpacing: 32,
+      chartRadius: MediaQuery.of(context).size.width / 3.2,
+      colorList: chartDataList.map((e) => Color(e.color!)).toList(),
+      initialAngleInDegree: 0,
+      chartType: ChartType.disc,
+      ringStrokeWidth: 32,
+      legendOptions: const LegendOptions(
+        showLegendsInRow: false,
+        legendPosition: LegendPosition.right,
+        showLegends: true,
+        legendTextStyle: TextStyle(
+          fontWeight: FontWeight.bold,
+        ),
       ),
-      swapAnimationDuration: const Duration(milliseconds: 150),
-      swapAnimationCurve: Curves.linear,
+      chartValuesOptions: const ChartValuesOptions(
+        showChartValueBackground: true,
+        showChartValues: true,
+        showChartValuesInPercentage: false,
+        showChartValuesOutside: false,
+        decimalPlaces: 2,
+      ),
     );
+  }
+
+  Map<String, double> getDataMap() {
+    Map<String, double> result = {};
+    for (var element in chartDataList) { 
+      result[element.name!] = element.amount!;
+    }
+    return result;
   }
 }
