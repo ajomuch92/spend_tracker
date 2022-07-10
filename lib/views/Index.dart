@@ -2,10 +2,12 @@ import 'package:bubble_bottom_bar/bubble_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_extra_fields/form_builder_extra_fields.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spend_tracker/models/FilterModel.dart';
 import 'package:spend_tracker/views/Categories.dart';
 import 'package:spend_tracker/views/Charts.dart';
 import 'package:spend_tracker/views/Home.dart';
+import 'package:spend_tracker/views/Settings.dart';
 import 'package:spend_tracker/views/Table.dart';
 import 'package:intl/intl.dart';
 import '../Utils/Transformation.dart';
@@ -29,7 +31,10 @@ class _IndexState extends State<Index> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-    if (mounted) _loadCategories();
+    if (mounted) {
+      _loadCategories();
+      setInitialPreference();
+    }
   }
 
   @override
@@ -56,6 +61,16 @@ class _IndexState extends State<Index> with AutomaticKeepAliveClientMixin {
       duration: const Duration(milliseconds: 400),
       curve: Curves.easeOut,
     );
+  }
+
+  void setInitialPreference() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? currency = prefs.getString('currency');
+    String? symbol = prefs.getString('symbol');
+    if (currency == null && symbol == null) {
+      prefs.setString('currency', 'Dollar');
+      prefs.setString('symbol', '\$');
+    }
   }
 
   void showFilterModal(BuildContext context) {
@@ -157,6 +172,7 @@ class _IndexState extends State<Index> with AutomaticKeepAliveClientMixin {
               onPressed: () {
                 showFilterModal(context);
               },
+              tooltip: 'Set filter',
               icon: const Icon(Icons.filter_alt_rounded, color: Colors.blueAccent,)
           ) : IconButton(onPressed: () {
             setState(() {
@@ -164,7 +180,20 @@ class _IndexState extends State<Index> with AutomaticKeepAliveClientMixin {
               filter.idCategory = null;
             });
             filter.notify();
-          }, icon: const Icon(Icons.filter_alt_off, color: Colors.redAccent))
+          }, icon: const Icon(Icons.filter_alt_off, color: Colors.redAccent), tooltip: 'Remove filter',),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Settings()),
+              ).then((value) {
+                if (value == true) {
+                  filter.notify();
+                }
+              });
+            }, 
+            icon: const Icon(Icons.settings, color: Colors.blueAccent,)
+          )
         ],
       ),
       body: PageView(
