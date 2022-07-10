@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_is_dark_color_hsp/flutter_is_dark_color_hsp.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spend_tracker/models/FilterModel.dart';
 import 'package:spend_tracker/models/ResponseModel.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -22,6 +23,7 @@ class _HomeState extends State<Home> {
   List<SpendModel> list = [];
   double totalLastMonth = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  String? symbol = '';
 
   @override
   initState() {
@@ -29,6 +31,7 @@ class _HomeState extends State<Home> {
     if (mounted) {
       loadPage();
       setListener();
+      loadSharedPreference();
     }
   }
 
@@ -49,13 +52,22 @@ class _HomeState extends State<Home> {
     }
   }
 
+  void loadSharedPreference() async {
+    var prefs = await SharedPreferences.getInstance();
+    setState(() {
+      symbol = prefs.getString('symbol');
+    });
+  }
+
   void reloadPage() {
     if (!mounted) return;
     setState(() {
       list = [];
     });
     loadPage();
+    loadSharedPreference();
   }
+
   void deleteItem(SpendModel spendModel) {
     try {
       BuildContext _context = _scaffoldKey.currentContext!;
@@ -132,9 +144,10 @@ class _HomeState extends State<Home> {
     return Column(
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Text('L ${totalLastMonth.toStringAsFixed(2)}'),
+            const Text('Total wasted:'),
+            Text('$symbol ${totalLastMonth.toStringAsFixed(2)}'),
           ],
         ),
         Expanded(
@@ -193,7 +206,7 @@ class _HomeState extends State<Home> {
       child: ListTile(
         title: Text(item.description!),
         subtitle: Text((DateFormat('dd/MM/yyyy')).format(item.date!)),
-        trailing: Text(item.amount!.toString()),
+        trailing: Text('$symbol ${item.amount!}'),
         leading: Container(
           width: 50.0,
           height: 50.0,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spend_tracker/models/FilterModel.dart';
 import '../models/ResponseModel.dart';
 import '../models/SpendModel.dart';
@@ -13,6 +14,7 @@ class TableView extends StatefulWidget {
 
 class _TableViewState extends State<TableView> {
   List<ChartResponseModel> chartDataList = [];
+  String? symbol = '';
 
   @override
   initState() {
@@ -20,12 +22,13 @@ class _TableViewState extends State<TableView> {
     if (mounted) {
       loadDataList();
       setListener();
+      loadSharedPreference();
     }
   }
 
   Future<void> loadDataList() async{
     List<ChartResponseModel> list = await SpendModel.getChartDataListLastMonth(filter: widget.filter);
-    list.sort((a, b) => a.amount!.compareTo(b.amount!));
+    list.sort((a, b) => b.amount!.compareTo(a.amount!));
     setState(() {
       chartDataList = list;
     });
@@ -34,9 +37,19 @@ class _TableViewState extends State<TableView> {
   void setListener() {
     if (widget.filter != null) {
       widget.filter!.addListener(() {
-        if (mounted) loadDataList();
+        if (mounted) {
+          loadDataList();
+          loadSharedPreference();
+        }
       });
     }
+  }
+
+  void loadSharedPreference() async {
+    var prefs = await SharedPreferences.getInstance();
+    setState(() {
+      symbol = prefs.getString('symbol');
+    });
   }
 
   @override
@@ -52,12 +65,12 @@ class _TableViewState extends State<TableView> {
               style: BorderStyle.solid,  
               width: 2
             ),
-            columns: const [
-              DataColumn(
+            columns: [
+              const DataColumn(
                 label: Text('Category'),
               ),
               DataColumn(
-                label: Text('Amount'),
+                label: Text('Amount($symbol)'),
               )
             ],
             rows: getTableRows(),
