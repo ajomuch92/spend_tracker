@@ -4,7 +4,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spend_tracker/models/FilterModel.dart';
 import 'package:spend_tracker/models/ResponseModel.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 import '../Utils/Toast.dart';
 import '../Utils/Transformation.dart';
 import '../models/SpendModel.dart';
@@ -156,15 +155,6 @@ class _HomeState extends State<Home> {
             itemCount: list.length,
           ),
         ),
-        VisibilityDetector(
-            key: const Key('1'),
-            onVisibilityChanged: (visibilityInfo) {
-              double visiblePercent = visibilityInfo.visibleFraction * 100;
-            },
-            child: Container(
-              height: 1.0,
-            )
-        )
       ],
     );
   }

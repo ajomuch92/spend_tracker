@@ -5,7 +5,6 @@ import 'package:spend_tracker/Utils/Toast.dart';
 import 'package:spend_tracker/models/CategoryModel.dart';
 import 'package:spend_tracker/models/ResponseModel.dart';
 import 'package:spend_tracker/views/NewCategory.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 
 import '../Utils/Transformation.dart';
 
@@ -129,16 +128,6 @@ class _CategoriesState extends State<Categories> {
             itemCount: list.length,
           ),
         ),
-        VisibilityDetector(
-            key: const Key('0'),
-            onVisibilityChanged: (visibilityInfo) {
-              double visiblePercent = visibilityInfo.visibleFraction * 100;
-              print(visiblePercent);
-            },
-            child: Container(
-              height: 1.0,
-            )
-        )
       ],
     );
   }
