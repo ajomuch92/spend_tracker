@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_extra_fields/form_builder_extra_fields.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import 'package:spend_tracker/Utils/IconList.dart';
 import 'package:spend_tracker/Utils/Toast.dart';
 import 'package:spend_tracker/models/CategoryModel.dart';
@@ -20,7 +19,6 @@ class NewCategory extends StatefulWidget {
 
 class _NewCategoryState extends State<NewCategory> {
   final _formKey = GlobalKey<FormBuilderState>();
-  SimpleFontelicoProgressDialog? _dialog;
   CategoryModel? categoryModelToEdit;
   final List<String> icons = icon_list;
   IList<String> ilist = IList(const []);
@@ -36,21 +34,18 @@ class _NewCategoryState extends State<NewCategory> {
 
   void _save(BuildContext context) async {
     try {
-      _dialog ??= SimpleFontelicoProgressDialog(context: context, barrierDimisable:  false);
       _formKey.currentState!.save();
       if (_formKey.currentState!.validate()) {
         Map<String, dynamic> jsonSpend = _formKey.currentState!.value;
         Color color = jsonSpend['colorPicker'] as Color;
         CategoryModel category = CategoryModel.fromCustomJson(jsonSpend);
         category.color = color.value;
-        _dialog!.show(message: 'Saving');
         if (categoryModelToEdit == null) {
           await category.save();
         } else {
           category.id = categoryModelToEdit?.id;
           await category.update();
         }
-        _dialog!.hide();
         if(!mounted) return;
         showToast(context, 'Category created successfully', toastStatus: ToastStatus.success);
         Navigator.pop(context, category);
@@ -59,7 +54,6 @@ class _NewCategoryState extends State<NewCategory> {
         showToast(context, 'Please fill required fields', toastStatus: ToastStatus.warning);
       }
     } catch (ex) {
-      _dialog!.hide();
       showToast(context, 'There was an error during saving', toastStatus: ToastStatus.error);
     }
   }

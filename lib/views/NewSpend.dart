@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_extra_fields/form_builder_extra_fields.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import 'package:spend_tracker/models/SpendModel.dart';
 import 'package:intl/intl.dart';
 
@@ -20,7 +19,6 @@ class NewSpend extends StatefulWidget {
 class _NewSpendState extends State<NewSpend> {
   final _formKey = GlobalKey<FormBuilderState>();
   SpendModel? spendModelToEdit;
-  SimpleFontelicoProgressDialog? _dialog;
   List<CategoryModel> categories = [];
 
   @override
@@ -42,10 +40,8 @@ class _NewSpendState extends State<NewSpend> {
 
   void _save(BuildContext context) async {
     try {
-      _dialog ??= SimpleFontelicoProgressDialog(context: context, barrierDimisable:  false);
       _formKey.currentState!.save();
       if (_formKey.currentState!.validate()) {
-        _dialog!.show(message: 'Saving');
         Map<String, dynamic> jsonSpend = _formKey.currentState!.value;
         SpendModel spend = SpendModel.fromCustomJson(jsonSpend);
         if (spendModelToEdit == null) {
@@ -54,7 +50,6 @@ class _NewSpendState extends State<NewSpend> {
           spend.id = spendModelToEdit?.id;
           await spend.update();
         }
-        _dialog!.hide();
         if(!mounted) return;
         showToast(context, 'Spend created successfully', toastStatus: ToastStatus.success);
         Navigator.pop(context, spend);
@@ -63,7 +58,6 @@ class _NewSpendState extends State<NewSpend> {
         showToast(context, 'Please fill required fields', toastStatus: ToastStatus.warning);
       }
     } catch(ex) {
-      _dialog!.hide();
       showToast(context, 'There was an error during saving', toastStatus: ToastStatus.error);
     }
   }
