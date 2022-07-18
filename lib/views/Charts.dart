@@ -61,14 +61,14 @@ class _ChartState extends State<Chart> {
       dataMap: getDataMap(),
       animationDuration: const Duration(milliseconds: 500),
       chartLegendSpacing: 32,
-      chartRadius: MediaQuery.of(context).size.width / 3.2,
+      chartRadius: MediaQuery.of(context).size.width / 2,
       colorList: chartDataList.map((e) => Color(e.color!)).toList(),
       initialAngleInDegree: 0,
       chartType: ChartType.disc,
       ringStrokeWidth: 32,
       legendOptions: const LegendOptions(
         showLegendsInRow: false,
-        legendPosition: LegendPosition.right,
+        legendPosition: LegendPosition.bottom,
         showLegends: true,
         legendTextStyle: TextStyle(
           fontWeight: FontWeight.bold,
