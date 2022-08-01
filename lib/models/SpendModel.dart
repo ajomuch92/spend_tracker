@@ -61,18 +61,17 @@ class SpendModel {
     Database db = await getDatabase();
     List<dynamic> whereArgs = [];
     List<String> where = [];
-    if (filter != null) {
-      if (filter.dateRange != null) {
-        where.add('date >= ?');
-        whereArgs.add(filter.dateRange!.start.millisecondsSinceEpoch);
-        where.add('date <= ?');
-        whereArgs.add(filter.dateRange!.end.millisecondsSinceEpoch);
-      }
-      if (filter.idCategory != null) {
-        where.add('idCategory = ?');
-        whereArgs.add(filter.idCategory!);
-      }
-    } else {
+    if (filter!.dateRange != null) {
+      where.add('date >= ?');
+      whereArgs.add(filter.dateRange!.start.millisecondsSinceEpoch);
+      where.add('date <= ?');
+      whereArgs.add(filter.dateRange!.end.millisecondsSinceEpoch);
+    }
+    if (filter!.idCategory != null) {
+      where.add('idCategory = ?');
+      whereArgs.add(filter.idCategory!);
+    }
+    if (filter!.dateRange == null) {
       DateTime date = DateTime.now();
       date = DateTime(date.year, date.month, 1);
       where.add('date >= ?');
