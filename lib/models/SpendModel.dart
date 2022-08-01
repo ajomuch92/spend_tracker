@@ -72,6 +72,11 @@ class SpendModel {
         where.add('idCategory = ?');
         whereArgs.add(filter.idCategory!);
       }
+    } else {
+      DateTime date = DateTime.now();
+      date = DateTime(date.year, date.month, 1);
+      where.add('date >= ?');
+      whereArgs.add(date.millisecondsSinceEpoch);
     }
     List<Map<String, dynamic>> result = await db.query(
       'spends',
